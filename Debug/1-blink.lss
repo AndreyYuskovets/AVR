@@ -1,0 +1,107 @@
+
+1-blink.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         0000005e  00000000  00000000  00000054  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .data         00000000  00800060  00800060  000000b2  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  2 .comment      00000030  00000000  00000000  000000b2  2**0
+                  CONTENTS, READONLY
+  3 .note.gnu.avr.deviceinfo 0000003c  00000000  00000000  000000e4  2**2
+                  CONTENTS, READONLY
+  4 .debug_aranges 00000020  00000000  00000000  00000120  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  5 .debug_info   00000420  00000000  00000000  00000140  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_abbrev 0000039e  00000000  00000000  00000560  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_line   00000202  00000000  00000000  000008fe  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_frame  00000024  00000000  00000000  00000b00  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_str    0000027c  00000000  00000000  00000b24  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_loc    00000048  00000000  00000000  00000da0  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 11 .debug_ranges 00000010  00000000  00000000  00000de8  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	09 c0       	rjmp	.+18     	; 0x14 <__ctors_end>
+   2:	0e c0       	rjmp	.+28     	; 0x20 <__bad_interrupt>
+   4:	0d c0       	rjmp	.+26     	; 0x20 <__bad_interrupt>
+   6:	0c c0       	rjmp	.+24     	; 0x20 <__bad_interrupt>
+   8:	0b c0       	rjmp	.+22     	; 0x20 <__bad_interrupt>
+   a:	0a c0       	rjmp	.+20     	; 0x20 <__bad_interrupt>
+   c:	09 c0       	rjmp	.+18     	; 0x20 <__bad_interrupt>
+   e:	08 c0       	rjmp	.+16     	; 0x20 <__bad_interrupt>
+  10:	07 c0       	rjmp	.+14     	; 0x20 <__bad_interrupt>
+  12:	06 c0       	rjmp	.+12     	; 0x20 <__bad_interrupt>
+
+00000014 <__ctors_end>:
+  14:	11 24       	eor	r1, r1
+  16:	1f be       	out	0x3f, r1	; 63
+  18:	cf e9       	ldi	r28, 0x9F	; 159
+  1a:	cd bf       	out	0x3d, r28	; 61
+  1c:	02 d0       	rcall	.+4      	; 0x22 <main>
+  1e:	1d c0       	rjmp	.+58     	; 0x5a <_exit>
+
+00000020 <__bad_interrupt>:
+  20:	ef cf       	rjmp	.-34     	; 0x0 <__vectors>
+
+00000022 <main>:
+#include <avr/io.h>
+#include <util/delay.h>
+
+int main(void)
+{
+    DDRB |= (1 << (PORTB4));
+  22:	87 b3       	in	r24, 0x17	; 23
+  24:	80 61       	ori	r24, 0x10	; 16
+  26:	87 bb       	out	0x17, r24	; 23
+    while (1) 
+    {
+		PORTB |= (1 << (PORTB4));
+  28:	88 b3       	in	r24, 0x18	; 24
+  2a:	80 61       	ori	r24, 0x10	; 16
+  2c:	88 bb       	out	0x18, r24	; 24
+	#else
+		//round up by default
+		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
+	#endif
+
+	__builtin_avr_delay_cycles(__ticks_dc);
+  2e:	2f ef       	ldi	r18, 0xFF	; 255
+  30:	84 e6       	ldi	r24, 0x64	; 100
+  32:	94 e0       	ldi	r25, 0x04	; 4
+  34:	21 50       	subi	r18, 0x01	; 1
+  36:	80 40       	sbci	r24, 0x00	; 0
+  38:	90 40       	sbci	r25, 0x00	; 0
+  3a:	e1 f7       	brne	.-8      	; 0x34 <main+0x12>
+  3c:	00 c0       	rjmp	.+0      	; 0x3e <__SP_L__+0x1>
+  3e:	00 00       	nop
+		_delay_ms(300);
+		PORTB &= ~(1 << (PORTB4));
+  40:	88 b3       	in	r24, 0x18	; 24
+  42:	8f 7e       	andi	r24, 0xEF	; 239
+  44:	88 bb       	out	0x18, r24	; 24
+  46:	2f ef       	ldi	r18, 0xFF	; 255
+  48:	84 e6       	ldi	r24, 0x64	; 100
+  4a:	94 e0       	ldi	r25, 0x04	; 4
+  4c:	21 50       	subi	r18, 0x01	; 1
+  4e:	80 40       	sbci	r24, 0x00	; 0
+  50:	90 40       	sbci	r25, 0x00	; 0
+  52:	e1 f7       	brne	.-8      	; 0x4c <__DATA_REGION_LENGTH__+0xc>
+  54:	00 c0       	rjmp	.+0      	; 0x56 <__DATA_REGION_LENGTH__+0x16>
+  56:	00 00       	nop
+  58:	e7 cf       	rjmp	.-50     	; 0x28 <main+0x6>
+
+0000005a <_exit>:
+  5a:	f8 94       	cli
+
+0000005c <__stop_program>:
+  5c:	ff cf       	rjmp	.-2      	; 0x5c <__stop_program>
